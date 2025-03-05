@@ -1,0 +1,21 @@
+name: CI/CD Pipeline
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npm run build
+      - uses: codiumai/codiumai-action@v1
+        with:
+          token: ${{ secrets.CODIUMAI_TOKEN }}
+      - uses: deepcode/deepcode-action@v1
+        with:
+          token: ${{ secrets.DEEPCODE_TOKEN }}
+      - run: npm test
+      - uses: amplication/amplication-action@v1
+        if: github.event_name == 'push'
